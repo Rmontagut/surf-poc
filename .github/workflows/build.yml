@@ -1,11 +1,14 @@
 name: build-surf
 
-# Reconstruit le PDF chaque jour et le publie sur GitHub Pages.
-# Rien d'allume chez toi : c'est un serveur cloud gratuit qui fait le travail.
+# Reconstruit le PDF toutes les heures (plage 5h-22h Paris) et le publie sur
+# GitHub Pages. Rien d'allume chez toi : un serveur cloud gratuit fait le travail.
 on:
   schedule:
-    - cron: '0 5 * * *'   # 05:00 UTC = 07:00 Paris (ete) / 06:00 (hiver). Cron = UTC, ne suit pas l'heure d'ete.
-  workflow_dispatch: {}    # + bouton « Run workflow » pour lancer a la main
+    # Cron = UTC, ne suit pas l'heure d'ete. 03:00-20:00 UTC = 05:00-22:00 Paris
+    # en ete (CEST). En hiver (CET) la plage glisse a 04:00-21:00 Paris : si ca
+    # te gene, passe a '0 4-21 * * *' pendant l'hiver.
+    - cron: '0 3-20 * * *'   # toutes les heures de 03:00 a 20:00 UTC
+  workflow_dispatch: {}      # + bouton « Run workflow » / gh workflow run pour lancer a la main
 
 permissions:
   contents: read
