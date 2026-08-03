@@ -140,6 +140,7 @@ const fontData = (file) => fs.readFileSync(path.join(ROOT, 'fonts', file)).toStr
 const assetB64 = (file) => fs.readFileSync(path.join(ROOT, 'assets', file)).toString('base64');
 const DIV_H = assetB64('divider-h.png');  // 2016 x 16 intrinseque (ratio 126:1)
 const DIV_V = assetB64('divider-v.png');  // 14 x 416 intrinseque
+const COAST = assetB64('coast.png');      // 82 x 536 intrinseque, trait de cote (pente deja dessinee)
 
 /** Divider horizontal, coin haut-gauche en (x, y), affiche a `width` px. */
 function dividerH(x, y, width) {
@@ -297,6 +298,15 @@ export function renderMain(d) {
 
   const swellBearing = swellDir != null ? travelBearing(swellDir) : 0;
   const windBearing = travelBearing(d.wind.direction);
+  // Trait de cote entre les deux fleches (ocean a gauche), repere pour lire
+  // l'angle du vent/houle par rapport a la plage. Le PNG est place droit : la
+  // pente reelle de Lacanau (~N-S, legerement « / ») est deja dans le dessin.
+  if (!stale) {
+    const coastH = 264;                       // depasse un peu en haut et en bas des fleches
+    const coastW = 82 * (coastH / 536);
+    parts.push(`<img src="data:image/png;base64,${COAST}" width="${coastW.toFixed(1)}" height="${coastH}" `
+      + `style="position:absolute;left:${(760 - coastW / 2).toFixed(1)}px;top:6px;display:block">`);
+  }
   if (swellDir != null && !stale) {
     parts.push(rotatedAsset('arrow-swell.png', 214.38, swellBearing, 516 + 107.19, 30 + 107.19));
   }
