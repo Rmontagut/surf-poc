@@ -1,0 +1,30 @@
+{
+  "mortes-eaux": {
+    "w": 977.0,
+    "h": 107.0,
+    "blockTop": 0.0,
+    "scale": 2,
+    "blockTopFlip": 18.34
+  },
+  "moyen-bas": {
+    "w": 977.0,
+    "h": 107.0,
+    "blockTop": 0.0,
+    "scale": 2,
+    "blockTopFlip": 18.34
+  },
+  "moyen-haut": {
+    "w": 977.0,
+    "h": 107.0,
+    "blockTop": 0.0,
+    "scale": 2,
+    "blockTopFlip": 18.34
+  },
+  "vives-eaux": {
+    "w": 977.0,
+    "h": 115.0,
+    "blockTop": 7.8501,
+    "scale": 2,
+    "blockTopFlip": 18.49
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "spot": "Lacanau",
+  "now": "2026-08-14T09:00:00+02:00",
+  "buoy": {
+    "waveHeight": 0.3,
+    "period": 5,
+    "direction": 300
+  },
+  "forecast": {
+    "waveHeight": 0.3,
+    "wavePeriod": 5,
+    "waveDirection": 300
+  },
+  "wind": {
+    "speed": 3,
+    "direction": 200
+  },
+  "weather": {
+    "airTemp": 29,
+    "waterTemp": 22,
+    "description": "Grand soleil",
+    "icon": "clear",
+    "uvIndex": 8
+  },
+  "tide": {
+    "extremes": [
+      {
+        "time": "2026-08-14T07:10:00+02:00",
+        "height": 2.0,
+        "type": "low",
+        "label": "07:10"
+      },
+      {
+        "time": "2026-08-14T13:20:00+02:00",
+        "height": 3.4,
+        "type": "high",
+        "label": "13:20"
+      },
+      {
+        "time": "2026-08-14T19:40:00+02:00",
+        "height": 2.1,
+        "type": "low",
+        "label": "19:40"
+      }
+    ]
+  },
+  "freshness": {
+    "ageHours": 0.5,
+    "staleAfterHours": 6,
+    "label": "14 août 2026 à 09:00"
+  },
+  "calibration": {
+    "k": 0.227
+  }
+}

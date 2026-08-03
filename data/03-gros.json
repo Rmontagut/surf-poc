@@ -1,0 +1,55 @@
+{
+  "spot": "Lacanau",
+  "now": "2026-11-22T10:15:00+01:00",
+  "buoy": {
+    "waveHeight": 3.6,
+    "period": 15,
+    "direction": 285
+  },
+  "forecast": {
+    "waveHeight": 3.6,
+    "wavePeriod": 15,
+    "waveDirection": 285
+  },
+  "wind": {
+    "speed": 46,
+    "direction": 270
+  },
+  "weather": {
+    "airTemp": 11,
+    "waterTemp": 14,
+    "description": "Pluie",
+    "icon": "rain",
+    "uvIndex": 1
+  },
+  "tide": {
+    "extremes": [
+      {
+        "time": "2026-11-22T05:55:00+01:00",
+        "height": 0.6,
+        "type": "low",
+        "label": "05:55"
+      },
+      {
+        "time": "2026-11-22T12:05:00+01:00",
+        "height": 5.2,
+        "type": "high",
+        "label": "12:05"
+      },
+      {
+        "time": "2026-11-22T18:30:00+01:00",
+        "height": 0.7,
+        "type": "low",
+        "label": "18:30"
+      }
+    ]
+  },
+  "freshness": {
+    "ageHours": 0.3,
+    "staleAfterHours": 6,
+    "label": "22 nov. 2026 à 10:15"
+  },
+  "calibration": {
+    "k": 0.227
+  }
+}

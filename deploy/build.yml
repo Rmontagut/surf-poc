@@ -1,0 +1,62 @@
+name: build-surf
+
+# Reconstruit le PDF chaque jour et le publie sur GitHub Pages.
+# Rien d'allume chez toi : c'est un serveur cloud gratuit qui fait le travail.
+on:
+  schedule:
+    - cron: '0 5 * * *'   # 05:00 UTC = 07:00 Paris (ete) / 06:00 (hiver). Cron = UTC, ne suit pas l'heure d'ete.
+  workflow_dispatch: {}    # + bouton « Run workflow » pour lancer a la main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04   # jammy : wkhtmltopdf s'installe via apt (retire des Ubuntu plus recents)
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Dependances systeme (rendu HTML->PNG + tramage e-ink)
+        run: sudo apt-get update && sudo apt-get install -y wkhtmltopdf xvfb python3-pil python3-numpy
+
+      - name: Dependances Node
+        run: npm install
+
+      - name: Fetch donnees reelles + build (PDF 7 jours)
+        env:
+          WORLDTIDES_KEY: ${{ secrets.WORLDTIDES_KEY }}
+          CANDHIS_TOKEN: ${{ secrets.CANDHIS_TOKEN }}
+        run: |
+          node tools/fetch.mjs
+          xvfb-run -a node build-week.mjs
+
+      - name: Preparer le dossier a publier
+        run: |
+          mkdir -p public
+          cp out/lacanau-semaine.pdf public/
+          cp out/semaine.html public/index.html
+          cp out/week/day-*-eink.png public/ 2>/dev/null || true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

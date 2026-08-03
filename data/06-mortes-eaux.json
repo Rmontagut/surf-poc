@@ -1,0 +1,55 @@
+{
+  "spot": "Lacanau",
+  "now": "2026-07-18T17:20:00+02:00",
+  "buoy": {
+    "waveHeight": 1.1,
+    "period": 13,
+    "direction": 295
+  },
+  "forecast": {
+    "waveHeight": 1.1,
+    "wavePeriod": 13,
+    "waveDirection": 295
+  },
+  "wind": {
+    "speed": 8,
+    "direction": 70
+  },
+  "weather": {
+    "airTemp": 25,
+    "waterTemp": 21,
+    "description": "Grand soleil",
+    "icon": "clear",
+    "uvIndex": 6
+  },
+  "tide": {
+    "extremes": [
+      {
+        "time": "2026-07-18T09:50:00+02:00",
+        "height": 2.2,
+        "type": "low",
+        "label": "09:50"
+      },
+      {
+        "time": "2026-07-18T15:55:00+02:00",
+        "height": 3.3,
+        "type": "high",
+        "label": "15:55"
+      },
+      {
+        "time": "2026-07-18T22:10:00+02:00",
+        "height": 2.3,
+        "type": "low",
+        "label": "22:10"
+      }
+    ]
+  },
+  "freshness": {
+    "ageHours": 0.4,
+    "staleAfterHours": 6,
+    "label": "18 juil. 2026 à 17:20"
+  },
+  "calibration": {
+    "k": 0.227
+  }
+}

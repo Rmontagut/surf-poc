@@ -1,0 +1,51 @@
+{
+  "spot": "Lacanau",
+  "now": "2026-09-05T07:45:00+02:00",
+  "buoy": null,
+  "forecast": {
+    "waveHeight": 1.4,
+    "wavePeriod": 8,
+    "waveDirection": 250
+  },
+  "wind": {
+    "speed": 22,
+    "direction": 160
+  },
+  "weather": {
+    "airTemp": 18,
+    "waterTemp": 20,
+    "description": "Couvert",
+    "icon": "cloudy",
+    "uvIndex": 3
+  },
+  "tide": {
+    "extremes": [
+      {
+        "time": "2026-09-05T04:20:00+02:00",
+        "height": 1.5,
+        "type": "low",
+        "label": "04:20"
+      },
+      {
+        "time": "2026-09-05T10:35:00+02:00",
+        "height": 3.9,
+        "type": "high",
+        "label": "10:35"
+      },
+      {
+        "time": "2026-09-05T16:50:00+02:00",
+        "height": 1.6,
+        "type": "low",
+        "label": "16:50"
+      }
+    ]
+  },
+  "freshness": {
+    "ageHours": 1.0,
+    "staleAfterHours": 6,
+    "label": "05 sept. 2026 à 07:45"
+  },
+  "calibration": {
+    "k": 0.227
+  }
+}

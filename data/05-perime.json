@@ -1,0 +1,55 @@
+{
+  "spot": "Lacanau",
+  "now": "2026-10-03T08:00:00+02:00",
+  "buoy": {
+    "waveHeight": 2.1,
+    "period": 12,
+    "direction": 270
+  },
+  "forecast": {
+    "waveHeight": 2.1,
+    "wavePeriod": 12,
+    "waveDirection": 270
+  },
+  "wind": {
+    "speed": 12,
+    "direction": 110
+  },
+  "weather": {
+    "airTemp": 16,
+    "waterTemp": 18,
+    "description": "Peu nuageux",
+    "icon": "partly",
+    "uvIndex": 3
+  },
+  "tide": {
+    "extremes": [
+      {
+        "time": "2026-10-03T06:05:00+02:00",
+        "height": 1.3,
+        "type": "low",
+        "label": "06:05"
+      },
+      {
+        "time": "2026-10-03T12:20:00+02:00",
+        "height": 4.0,
+        "type": "high",
+        "label": "12:20"
+      },
+      {
+        "time": "2026-10-03T18:35:00+02:00",
+        "height": 1.4,
+        "type": "low",
+        "label": "18:35"
+      }
+    ]
+  },
+  "freshness": {
+    "ageHours": 52,
+    "staleAfterHours": 6,
+    "label": "01 oct. 2026 à 04:00"
+  },
+  "calibration": {
+    "k": 0.227
+  }
+}
