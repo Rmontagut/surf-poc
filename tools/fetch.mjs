@@ -75,6 +75,37 @@ function computeTides() {
   return tideExtremesRange(today, CFG.days + 1);
 }
 
+// Choix des 3 extremes AFFICHES : parmi les cycles de 3 extremes consecutifs
+// commencant ce jour-la, on prend celui qui couvre le mieux la journee eveillee
+// (7h-21h), quitte a deborder sur le lendemain matin. La maree de la nuit
+// n'interesse personne : un 13 aout donne PM 08:19 / BM 14:10 / PM 20:34,
+// pas BM 01:56 / PM 08:19 / BM 14:10.
+const DAY_START = 7 * 60, DAY_END = 21 * 60; // fenetre « journee », minutes locales
+function nextDateStr(dateStr) {
+  return new Date(Date.parse(dateStr) + 86400000).toISOString().slice(0, 10);
+}
+export function pickDayCycle(tides, dateStr) {
+  const nd = nextDateStr(dateStr);
+  let all = (tides || []).filter((e) => e.date === dateStr || e.date === nd);
+  if (all.filter((e) => e.date === dateStr).length < 2) {
+    all = [
+      ...tideExtremesForDate(dateStr).map((e) => ({ date: dateStr, ...e })),
+      ...tideExtremesForDate(nd).map((e) => ({ date: nd, ...e })),
+    ];
+  }
+  const toMin = (e) => {
+    const [h, m] = e.label.split(':').map(Number);
+    return (e.date === nd ? 1440 : 0) + h * 60 + m;
+  };
+  let best = null, bestOv = -1;
+  for (let i = 0; i + 2 < all.length; i++) {
+    if (all[i].date !== dateStr) continue; // le cycle commence ce jour-la
+    const ov = Math.min(toMin(all[i + 2]), DAY_END) - Math.max(toMin(all[i]), DAY_START);
+    if (ov > bestOv) { bestOv = ov; best = all.slice(i, i + 3); }
+  }
+  return (best || all.slice(0, 3)).map(({ date, ...rest }) => rest);
+}
+
 // --- Bouee mesuree (CANDHIS) ---------------------------------------------
 async function fetchBuoy() {
   if (!KEYS.candhis) return null;
@@ -126,10 +157,8 @@ export function buildDays({ marine, forecast, tides, buoy, fetchedAtISO }) {
     const uv = at(fH, 'uv_index', `${dateStr}T${pad(hh)}:00`) ?? 0;
     const [icon, description] = wx(Math.round(code ?? 0));
 
-    // Marees du jour : calcul harmonique local filtre par date.
-    let extremes = tides ? tides.filter((e) => e.date === dateStr).slice(0, 3) : [];
-    if (extremes.length < 2) extremes = tideExtremesForDate(dateStr).map((e) => ({ date: dateStr, ...e })).slice(0, 3);
-    extremes = extremes.map(({ date, ...rest }) => rest); // on retire le champ interne 'date'
+    // Marees du jour : cycle centre sur la journee (7h-21h), cf pickDayCycle.
+    const extremes = pickDayCycle(tides, dateStr);
 
     return {
       spot: CFG.spot,

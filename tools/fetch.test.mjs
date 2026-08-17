@@ -2,7 +2,7 @@
 // simulees (Open-Meteo / WorldTides / CANDHIS) et on verifie que buildDays
 // produit 7 jours valides, rendus sans erreur par renderMain.
 import assert from 'node:assert';
-import { buildDays } from './fetch.mjs';
+import { buildDays, pickDayCycle } from './fetch.mjs';
 import { tideExtremesForDate } from './tide-harmonic.mjs';
 import { renderMain } from '../src/render.mjs';
 
@@ -22,6 +22,20 @@ import { renderMain } from '../src/render.mjs';
     assert.ok(/^\d{2}:\d{2}$/.test(e.label) && e.time.includes('2026-08-13'), 'format label/time');
   });
   console.log('OK — maree harmonique : 13 aout 2026 reproduit a ±5 min / ±10 cm.');
+}
+
+// --- Cadrage journee : on n'affiche pas la maree de la nuit ---------------
+// Le 17 aout 2026, les extremes du jour sont BM 01:56 / PM 08:19 / BM 14:10 /
+// PM 20:34 : l'ecran doit montrer le cycle de jour (08:19 -> 20:34), pas
+// celui qui demarre a 01:56.
+{
+  const cycle = pickDayCycle(null, '2026-08-17'); // null -> calcul harmonique direct
+  assert.equal(cycle.length, 3, 'cycle de 3 extremes');
+  assert.equal(cycle[0].type, 'high', 'commence par la PM du matin');
+  assert.equal(cycle[0].label, '08:19', 'premier extreme 08:19 (pas 01:56)');
+  assert.equal(cycle[2].label, '20:34', 'dernier extreme 20:34 (soir couvert)');
+  assert.ok(!('date' in cycle[0]), 'champ interne date retire');
+  console.log('OK — cadrage journee : 17 aout affiche PM 08:19 -> PM 20:34.');
 }
 
 const dates = ['2026-08-02', '2026-08-03', '2026-08-04', '2026-08-05', '2026-08-06', '2026-08-07', '2026-08-08'];
