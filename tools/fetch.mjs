@@ -4,14 +4,16 @@
 //
 // Sources :
 //   - Open-Meteo Marine + Forecast : houle, vent, meteo, temp. eau (gratuit, sans cle)
-//   - WorldTides (extremes)        : marees            -> env WORLDTIDES_KEY
+//   - Marees : CALCUL HARMONIQUE LOCAL (tools/tide-harmonic.mjs) — aucun appel
+//     reseau, aucune cle, aucun quota. WorldTides abandonne (credits epuises).
 //   - CANDHIS (Cerema) getCampTR    : houle MESUREE J0  -> env CANDHIS_TOKEN (bouee 03302)
 //
-// Sans les cles : Open-Meteo suffit a tout rendre ; marees en repli synthetique
-// (averti) et bouee ignoree (repli sur le modele). Avec les cles : 100% reel.
+// Sans cle : Open-Meteo + marees calculees suffisent a tout rendre en reel ;
+// seule la houle MESUREE (bouee) demande un jeton.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { tideExtremesRange, tideExtremesForDate } from './tide-harmonic.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -28,7 +30,6 @@ export const CFG = {
 };
 
 const KEYS = {
-  worldtides: process.env.WORLDTIDES_KEY || null,
   candhis: process.env.CANDHIS_TOKEN || null,
 };
 
@@ -63,40 +64,15 @@ function at(hourly, field, timeStr) {
 // Houle : la vraie « houle » est le swell ; on retombe sur l'etat de mer total.
 const swellAt = (h, base, hh) => at(h, 'swell_wave_height', `${base}T${pad(hh)}:00`) ?? at(h, 'wave_height', `${base}T${pad(hh)}:00`);
 
-// Heure/date locales Europe/Paris d'un timestamp unix (pour WorldTides, en UTC).
+// Date locale Europe/Paris.
 const PARIS_DATE = new Intl.DateTimeFormat('en-CA', { timeZone: CFG.tz, year: 'numeric', month: '2-digit', day: '2-digit' });
-const PARIS_HM = new Intl.DateTimeFormat('en-GB', { timeZone: CFG.tz, hour: '2-digit', minute: '2-digit', hour12: false });
 
-// --- Marees ---------------------------------------------------------------
-async function fetchTides() {
-  if (!KEYS.worldtides) return null;
-  const start = Math.floor(Date.now() / 1000) - 12 * 3600; // capture la maree du matin
-  const url = `https://www.worldtides.info/api/v3?extremes&lat=${CFG.lat}&lon=${CFG.lon}`
-    + `&start=${start}&days=${CFG.days + 2}&key=${KEYS.worldtides}`;
-  const j = await getJSON(url);
-  if (!Array.isArray(j.extremes)) throw new Error('WorldTides : reponse sans extremes');
-  return j.extremes.map((e) => {
-    const d = new Date(e.dt * 1000);
-    return {
-      date: PARIS_DATE.format(d),
-      time: new Date(e.dt * 1000).toISOString(),
-      height: +Number(e.height).toFixed(2),
-      type: String(e.type).toLowerCase() === 'high' ? 'high' : 'low',
-      label: PARIS_HM.format(d),
-    };
-  });
-}
-
-// Repli : maree synthetique plausible quand pas de cle (cf gen-week).
-function synthTideDay(dateStr, i) {
-  const mean = 2.7;
-  const marnage = 3.6;
-  const lo = +(mean - marnage / 2).toFixed(1);
-  const hi = +(mean + marnage / 2).toFixed(1);
-  const base = 6 * 60 + 20 + i * 50;
-  const hhmm = (m) => `${pad(Math.floor((m % 1440) / 60))}:${pad(m % 60)}`;
-  const mk = (m, h, t) => ({ time: `${dateStr}T${hhmm(m)}:00+02:00`, height: h, type: t, label: hhmm(m) });
-  return [mk(base, lo, 'low'), mk(base + 372, hi, 'high'), mk(base + 745, lo, 'low')];
+// --- Marees : calcul harmonique local (ni API, ni cle, ni quota) ----------
+// Prediction astronomique SHOM-grade calee sur Lacanau, valable des annees.
+// Voir tools/tide-harmonic.mjs + tools/tide-constants.json (provenance du fit).
+function computeTides() {
+  const today = PARIS_DATE.format(new Date());
+  return tideExtremesRange(today, CFG.days + 1);
 }
 
 // --- Bouee mesuree (CANDHIS) ---------------------------------------------
@@ -150,9 +126,9 @@ export function buildDays({ marine, forecast, tides, buoy, fetchedAtISO }) {
     const uv = at(fH, 'uv_index', `${dateStr}T${pad(hh)}:00`) ?? 0;
     const [icon, description] = wx(Math.round(code ?? 0));
 
-    // Marees du jour : vraies (WorldTides) filtrees par date, sinon repli.
+    // Marees du jour : calcul harmonique local filtre par date.
     let extremes = tides ? tides.filter((e) => e.date === dateStr).slice(0, 3) : [];
-    if (extremes.length < 2) extremes = synthTideDay(dateStr, i);
+    if (extremes.length < 2) extremes = tideExtremesForDate(dateStr).map((e) => ({ date: dateStr, ...e })).slice(0, 3);
     extremes = extremes.map(({ date, ...rest }) => rest); // on retire le champ interne 'date'
 
     return {
@@ -190,9 +166,7 @@ async function fetchAll() {
 
   const [marine, forecast] = await Promise.all([getJSON(marineUrl), getJSON(forecastUrl)]);
 
-  let tides = null;
-  try { tides = await fetchTides(); } catch (e) { console.warn('! marees :', e.message); }
-  if (!tides) console.warn(KEYS.worldtides ? '! marees indisponibles -> repli synthetique' : '! WORLDTIDES_KEY absente -> marees synthetiques');
+  const tides = computeTides(); // local, deterministe, jamais en echec
 
   let buoy = null;
   try { buoy = await fetchBuoy(); } catch (e) { console.warn('! bouee :', e.message); }

@@ -32,6 +32,18 @@ coupé entre-temps.
   extrêmes tombent toujours à 10 / 50 / 90 % de la largeur, donc les heures
   sont à des positions fixes et les courbes dessinées sont réutilisables.
 - **Hauteur toujours en fourchette**, jamais en valeur unique.
+- **Marées par calcul harmonique local** (17 août 2026), pas par API. WorldTides
+  abandonné (quota gratuit épuisé — absurde pour un phénomène prévisible à
+  l'année). `tools/tide-harmonic.mjs` : 37 composantes + corrections nodales
+  (f, u) recalculées à chaque date → valable des années sans maintenance.
+  Constantes locales figées dans `tools/tide-constants.json`, obtenues par
+  moindres carrés sur 2 ans de hauteurs d'eau horaires au droit de Lacanau
+  (Open-Meteo `sea_level_height_msl`, résidu RMS 11 cm = surcote météo), puis
+  calées sur SHOM/surf-forecast : décalage large → plage PM +25 min / BM
+  +30 min, hauteurs ramenées au zéro hydrographique (offset 3,09 m, échelle
+  1,02). Vérifié : 13 août ±2 min sur les 3 extrêmes ; semaine SHOM ±6 min.
+  En mortes-eaux profondes (coef < 35) l'heure des extrêmes est intrinsèquement
+  floue (courbe plate, les références divergent entre elles de 10-20 min).
 
 ## Assets
 
@@ -83,13 +95,14 @@ un éclair. Voir le tableau d'assemblage dans le brief de design.
    `out/semaine.html`. Données factices en attendant les API. À câbler ensuite :
    `data/week/*.json` doit venir d'Open-Meteo (prévision horaire agrégée/jour).
 6. ~~**APIs pas câblées**~~ — CÂBLÉES dans `tools/fetch.mjs` (Open-Meteo Marine +
-   Forecast pour houle/vent/météo/temp. eau, gratuit sans clé ; WorldTides pour
-   les marées via `WORLDTIDES_KEY` ; CANDHIS bouée 03302 via `CANDHIS_TOKEN`).
-   Transform validé hors-réseau (`tools/fetch.test.mjs`). **Ne s'exécute PAS dans
-   le sandbox Cowork** (réseau verrouillé) : à lancer sur une machine avec accès
-   Internet, d'où le Kobo tirera les PNG. Sans clés, tout se rend quand même
-   (marées en repli synthétique, bouée ignorée). Reste à obtenir le jeton
-   CANDHIS (compte Cerema, candhis@cerema.fr) ; clé WorldTides déjà en main.
+   Forecast pour houle/vent/météo/temp. eau, gratuit sans clé ; marées par
+   **calcul harmonique local** sans réseau ; CANDHIS bouée 03302 via
+   `CANDHIS_TOKEN`). Transform validé hors-réseau (`tools/fetch.test.mjs`).
+   **Ne s'exécute PAS dans le sandbox Cowork** (réseau verrouillé) : à lancer
+   sur une machine avec accès Internet, d'où le Kobo tirera les PNG. Sans jeton
+   CANDHIS, la bouée est ignorée (repli sur le modèle) — tout le reste est réel.
+   Reste à obtenir le jeton CANDHIS (compte Cerema, candhis@cerema.fr).
+   WorldTides : abandonné, la clé et le secret GitHub ne servent plus.
 7. **Dividers en gris ~50 %** (#808080, tels que dessinés dans Figma). Lisibles
    mais délicats ; à assombrir vers #404040 si on les veut plus porteurs.
 8. **Icônes météo (8)** : toujours à assembler (voir Assets).
@@ -100,7 +113,7 @@ un éclair. Voir le tableau d'assemblage dans le brief de design.
 |---|---|---|
 | Houle mesurée | Bouée Cap Ferret 03302 (CANDHIS / Cerema), maj 30 min | à vérifier |
 | Houle prévue, vent, météo | Open-Meteo (Marine + Forecast) | gratuit |
-| Marées | Marea API — 1 requête/an mise en cache | ~gratuit |
+| Marées | Calcul harmonique local (`tools/tide-harmonic.mjs`) | gratuit à vie |
 | Hauteur au déferlement | calculé, Komar & Gaughan (1972) | — |
 
 ## La constante k

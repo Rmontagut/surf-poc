@@ -37,7 +37,6 @@ jobs:
 
       - name: Fetch donnees reelles + build (PDF 7 jours)
         env:
-          WORLDTIDES_KEY: ${{ secrets.WORLDTIDES_KEY }}
           CANDHIS_TOKEN: ${{ secrets.CANDHIS_TOKEN }}
         run: |
           node tools/fetch.mjs

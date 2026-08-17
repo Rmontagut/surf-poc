@@ -3,7 +3,26 @@
 // produit 7 jours valides, rendus sans erreur par renderMain.
 import assert from 'node:assert';
 import { buildDays } from './fetch.mjs';
+import { tideExtremesForDate } from './tide-harmonic.mjs';
 import { renderMain } from '../src/render.mjs';
+
+// --- Maree harmonique : non-regression sur la date de reference -----------
+// fr.surf-forecast.com, Lacanau, 13 aout 2026 : PM 05:43 (4,62) · BM 11:30
+// (0,64) · PM 17:58 (4,95). Tolerance : 5 min / 10 cm.
+{
+  const ext = tideExtremesForDate('2026-08-13');
+  const want = [['high', '05:43', 4.62], ['low', '11:30', 0.64], ['high', '17:58', 4.95]];
+  const mins = (s) => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
+  assert.ok(ext.length >= 3, 'au moins 3 extremes le 2026-08-13');
+  want.forEach(([ty, t, h], i) => {
+    const e = ext[i];
+    assert.equal(e.type, ty, `extreme ${i} : type ${ty}`);
+    assert.ok(Math.abs(mins(e.label) - mins(t)) <= 5, `extreme ${i} : ${e.label} vs ${t} (±5 min)`);
+    assert.ok(Math.abs(e.height - h) <= 0.10, `extreme ${i} : ${e.height} vs ${h} m (±10 cm)`);
+    assert.ok(/^\d{2}:\d{2}$/.test(e.label) && e.time.includes('2026-08-13'), 'format label/time');
+  });
+  console.log('OK — maree harmonique : 13 aout 2026 reproduit a ±5 min / ±10 cm.');
+}
 
 const dates = ['2026-08-02', '2026-08-03', '2026-08-04', '2026-08-05', '2026-08-06', '2026-08-07', '2026-08-08'];
 

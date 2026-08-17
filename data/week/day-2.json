@@ -1,49 +1,49 @@
 {
   "spot": "Lacanau",
-  "now": "2026-08-05T12:00:00+02:00",
+  "now": "2026-08-19T12:00:00+02:00",
   "buoy": null,
   "forecast": {
-    "waveHeight": 0.9,
-    "wavePeriod": 5,
-    "waveDirection": 282
+    "waveHeight": 0.5,
+    "wavePeriod": 4,
+    "waveDirection": 311
   },
   "wind": {
-    "speed": 6,
-    "direction": 315
+    "speed": 12,
+    "direction": 305
   },
   "weather": {
-    "airTemp": 23,
+    "airTemp": 25,
     "waterTemp": 24,
-    "description": "Couvert",
-    "icon": "cloudy",
-    "uvIndex": 5
+    "description": "Grand soleil",
+    "icon": "clear",
+    "uvIndex": 4
   },
   "tide": {
     "extremes": [
       {
-        "time": "2026-08-05T01:16:33.000Z",
-        "height": -1.45,
+        "time": "2026-08-19T08:00:00+02:00",
+        "height": 0.9,
         "type": "low",
-        "label": "03:16"
+        "label": "08:00"
       },
       {
-        "time": "2026-08-05T07:29:33.000Z",
-        "height": 1.26,
+        "time": "2026-08-19T14:12:00+02:00",
+        "height": 4.5,
         "type": "high",
-        "label": "09:29"
+        "label": "14:12"
       },
       {
-        "time": "2026-08-05T13:36:33.000Z",
-        "height": -1.31,
+        "time": "2026-08-19T20:25:00+02:00",
+        "height": 0.9,
         "type": "low",
-        "label": "15:36"
+        "label": "20:25"
       }
     ]
   },
   "freshness": {
     "ageHours": 0.2,
     "staleAfterHours": 6,
-    "label": "03 août 2026 à 09:44"
+    "label": "17 août 2026 à 10:43"
   },
   "calibration": {
     "k": 0.227
