@@ -6,3 +6,8 @@ out/
 
 # Divers macOS
 .DS_Store
+
+# Firmware ESP32 : config locale (contient ton mot de passe WiFi -> jamais sur GitHub)
+esp32/src/config.h
+# PlatformIO : caches de build
+esp32/.pio/

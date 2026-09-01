@@ -41,6 +41,7 @@ jobs:
         run: |
           node tools/fetch.mjs
           xvfb-run -a node build-week.mjs
+          xvfb-run -a node build-esp32.mjs
 
       - name: Preparer le dossier a publier
         run: |
@@ -48,6 +49,7 @@ jobs:
           cp out/lacanau-semaine.pdf public/
           cp out/semaine.html public/index.html
           cp out/week/day-*-eink.png public/ 2>/dev/null || true
+          cp out/esp32/lacanau-esp32*.bin public/ 2>/dev/null || true
 
       - uses: actions/upload-pages-artifact@v3
         with:

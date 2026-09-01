@@ -21,4 +21,8 @@ for (const theme of Object.keys(THEMES)) {
   execFileSync('python3', ['eink.py', `${OUT}/${name}.png`], { stdio: 'ignore' });
   console.log('rendu', name);
 }
-console.log('-> out/esp32/day-0-light-eink.png, day-0-dark-eink.png');
+
+// Framebuffers bruts 4 bpp pour le boitier (telecharges par esp32/src/main.cpp).
+execFileSync('python3', ['tools/pack-esp32.py', `${OUT}/day-0-light-eink.png`, `${OUT}/lacanau-esp32.bin`]);
+execFileSync('python3', ['tools/pack-esp32.py', `${OUT}/day-0-dark-eink.png`, `${OUT}/lacanau-esp32-dark.bin`]);
+console.log('-> out/esp32/day-0-{light,dark}-eink.png + lacanau-esp32[-dark].bin');
