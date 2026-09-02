@@ -7,7 +7,7 @@ on:
     # Cron = UTC, ne suit pas l'heure d'ete. 03:00-20:00 UTC = 05:00-22:00 Paris
     # en ete (CEST). En hiver (CET) la plage glisse a 04:00-21:00 Paris : si ca
     # te gene, passe a '0 4-21 * * *' pendant l'hiver.
-    - cron: '0 3-20 * * *'   # toutes les heures de 03:00 a 20:00 UTC
+    - cron: '23 3-20 * * *'   # toutes les heures de 03:00 a 20:00 UTC
   workflow_dispatch: {}      # + bouton « Run workflow » / gh workflow run pour lancer a la main
 
 permissions:

@@ -22,6 +22,11 @@ la télécharge et l'affiche. Deux cibles matérielles en lice :
   - PDF en ligne : `https://rmontagut.github.io/surf-poc/lacanau-semaine.pdf`
 - **Trait de côte** ajouté (repère offshore/onshore).
 - **Rendu ESP32 540×960 en light ET dark** (bascule par un seul flag `theme`).
+- **✅ BOÎTIER ESP32 EN SERVICE (1er sept)** : LilyGO T5 4.7″ S3 Touch flashé
+  (`esp32/`, PlatformIO). Cycle : réveil → WiFi → télécharge
+  `lacanau-esp32.bin` (framebuffer 4 bpp publié par le build) → affiche →
+  veille profonde 2 h (re-essai 15 min si échec, repli image embarquée).
+  Le workflow génère et publie `lacanau-esp32[-dark].bin` à chaque build.
 
 ## ✅ RÉSOLU (17 août) — marées par calcul harmonique local
 
@@ -54,8 +59,7 @@ la télécharge et l'affiche. Deux cibles matérielles en lice :
 - [x] Repli synthétique supprimé : la marée est toujours calculée, jamais inventée.
 - [x] `.github/workflows/build.yml` : env `WORLDTIDES_KEY` retirée (le secret
       GitHub peut être supprimé du dépôt, il ne sert plus).
-- [ ] Pousser ces changements sur GitHub (`git add -A && git commit && git push`)
-      et vérifier le prochain run Actions.
+- [x] Poussé sur GitHub, build vérifié : le PDF affiche les vraies marées.
 
 ### 3. Valider + intégrer le rendu ESP32
 - [ ] Comparer le 540×960 (light/dark) à la maquette Figma, ajuster tailles/positions
@@ -63,7 +67,8 @@ la télécharge et l'affiche. Deux cibles matérielles en lice :
 - [x] `src/render-esp32.mjs` + `build-esp32.mjs` + `assets/theme/` sauvegardés sur le disque.
 - [ ] Optionnel : ré-exporter les assets crayonnés **en noir** depuis le nouveau frame Figma
       (plus net que mes versions recolorées).
-- [ ] Quand validé : ajouter un profil ESP32 au workflow GitHub (générer aussi ces PNG).
+- [x] Profil ESP32 ajouté au workflow GitHub (`build-esp32.mjs` + `tools/pack-esp32.py`
+      → `lacanau-esp32[-dark].bin` publiés sur Pages).
 
 ### 4. Choisir + commander le matériel
 - [ ] **Liseuse** : Kobo **Glo HD** (300 ppi, aucun hack) — le plus simple. OU
@@ -74,7 +79,18 @@ la télécharge et l'affiche. Deux cibles matérielles en lice :
 ### 5. À la réception du matériel
 - [ ] **Liseuse** : installer KOReader → ouvrir le PDF → régler le téléchargement au réveil
       (voir `HARDWARE.md`, étape 3).
-- [ ] **ESP32** : flasher le firmware qui télécharge l'image et l'affiche (à écrire ensemble).
+- [x] **ESP32** : firmware écrit et flashé (`esp32/`, voir `esp32/README.md`) —
+      le boîtier télécharge et affiche l'image du jour en autonomie. ⚠️ Le WiFi
+      est dans `esp32/src/config.h`, gitignoré (jamais sur GitHub) ; pour
+      reflasher après une veille profonde : maintenir STR_IO0 (BOOT), un coup
+      de REST, relâcher, puis `pio run -t upload`.
+
+### 5 bis. ESP32 — prochaines itérations
+- [ ] **Tactile (étape 3)** : naviguer J+1/J-1 au toucher (dalle GT911). Demande
+      les 7 jours en `.bin` publiés + réveil au toucher — à faire carte en main.
+- [ ] Ajuster le rendu 540×960 sur le vrai écran si besoin (contraste, tailles).
+- [ ] Thème dark automatique la nuit ? (`lacanau-esp32-dark.bin` déjà publié.)
+- [ ] Batterie LiPo (JST 2.0, ⚠️ polarité) + mesure d'autonomie réelle.
 
 ### 6. Optionnel / plus tard
 - [ ] Jeton **CANDHIS** (mail à `candhis@cerema.fr`) pour la houle **MESURÉE** (bouée Cap
