@@ -50,6 +50,7 @@ jobs:
           cp out/semaine.html public/index.html
           cp out/week/day-*-eink.png public/ 2>/dev/null || true
           cp out/esp32/lacanau-esp32*.bin public/ 2>/dev/null || true
+                       if [ -f test-ecran/esp32.bin ]; then cp test-ecran/esp32.bin public/lacanau-esp32.bin; cp test-ecran/esp32.bin public/lacanau-esp32-dark.bin; fi
 
       - uses: actions/upload-pages-artifact@v3
         with:
